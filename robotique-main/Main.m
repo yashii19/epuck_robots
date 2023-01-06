@@ -27,7 +27,7 @@ r = Robotarium('NumberOfRobots', N, 'ShowFigure', true, 'InitialConditions', ini
 
 %% PARAMETERS 
 SPEED = r.max_linear_velocity ; % Moving speed of the robots
-DETECTION_RANGE = 0.05 ; % Distance to the target for detection
+DETECTION_RANGE = 1.0 ; % Distance to the target for detection
 ATTACK_RANGE = 0.5 ; % Distance to the target for attacking 
 ATTACK_STRENGTH = 0.01 ; % Reduction of target energy for robot attacking the target
 
@@ -59,8 +59,11 @@ si_to_uni_dyn = create_si_to_uni_dynamics();
 
 %% CREATE THE ROBOTS
 clear allRobots
-for i=1:N
-    allRobots{i} = Robot(i , initial_conditions(1,i) , initial_conditions(2,i) , initial_conditions(3,i) , SPEED);
+for i=1:N/2
+    allRobots{i} = Robot(i , initial_conditions(1,i) , initial_conditions(2,i) , initial_conditions(3,i) , SPEED, "small");
+end
+for i=N/2:N
+    allRobots{i} = Robot(i , initial_conditions(1,i) , initial_conditions(2,i) , initial_conditions(3,i) , SPEED, "big");
 end
 
 %% DATA COLLECTION
@@ -138,11 +141,7 @@ while target_energy>0 && total_time<900
                         allRobots{i}.set_info_cible(x_target, y_target);
                     end
                     
-                    if (allRobots{i}.cible_detected==1) && (d_target(i)<ATTACK_RANGE)
-                        allRobots{i}.start_attack();
-                    else
-                        allRobots{i}.stop_attack();
-                    end                   
+                                     
   
             % Update the states of the robot
                 allRobots{i}.update(INFO) ;
@@ -151,16 +150,14 @@ while target_energy>0 && total_time<900
     
         % Control LEDS
         for i=1:N
-            % Green light when target has been detected
-            if (allRobots{i}.cible_detected==1)
+            % Green light when robot is small
+            if (allRobots{i}.size_robot == "small")
                 r.set_right_leds(i , [0 ; 255 ; 0]);
             end
 
             % Red light when target is attacked
-            if (allRobots{i}.cible_attacked==1)
+            if (allRobots{i}.size_robot == "big")
                 r.set_left_leds(i , [255 ; 0 ; 0]);
-            else
-                r.set_left_leds(i , [0 ; 0 ; 0]);
             end
         end
 

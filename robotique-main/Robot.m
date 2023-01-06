@@ -74,14 +74,15 @@ classdef Robot < handle
         
         
         MAX_SPEED       % La vitesse de déplacement du robot. Vous ne pouvez pas modifier cette propriété.
-
+        
+        size_robot
     end
     
     
     
     methods
         
-        function robot = Robot(id, x,y,orientation , SPEED)
+        function robot = Robot(id, x,y,orientation , SPEED, size_robots)
             % Cette fonction est utilisée par le simulateur pour initialiser
             % le robot. Vous n'avez pas besoin de l'utiliser. 
             
@@ -96,11 +97,12 @@ classdef Robot < handle
             robot.cible_attacked = 0 ;
             robot.cible_x = NaN ;
             robot.cible_y = NaN ;
+            robot.size_robot = size_robots;
 
         end
         
         
-        function robot = move(robot, vx, vy)
+        function robot = move2(robot, vx, vy)
             % Utilisez cette fonction pour donner une direction de
             % déplacement (vx, vy) à ce robot ou à un robot voisin. 
             % Par exemple move(1,0) produira un déplacement vers la
@@ -115,6 +117,23 @@ classdef Robot < handle
             robot.vy = v(2) ;
         end
         
+        function robot = move(robot, v)
+            % Utilisez cette fonction pour donner une direction de
+            % déplacement (vx, vy) à ce robot ou à un robot voisin. 
+            % Par exemple move(1,0) produira un déplacement vers la
+            % droite.
+            
+            
+            if (norm(v)>0)
+                v =  robot.MAX_SPEED .* v ./ norm(v);
+            end
+            
+            robot.vx = v(1) ;
+            robot.vy = v(2) ;
+        end
+
+            
+       
         
         function robot = set_info_cible(robot, cible_x, cible_y)
             % Cette fonction permet de renseigner les informations sur la 
@@ -209,7 +228,7 @@ classdef Robot < handle
             % propre programme) 
             
             
-            exemple1 ;
+            %exemple1 ;
             
             % L'exemple 1 n'est pas très efficace car les robots ont
             % tendance à se coincer contre les murs.
@@ -234,6 +253,8 @@ classdef Robot < handle
             % https://form.jotform.com/211041157414038
             
             % Amusez-vous bien !
+
+            update;
             
 
         end

@@ -15,9 +15,9 @@ addpath(genpath('utilities'));
 
 %% Set up Robotarium object
 
-N = 12;
-xi = [-0.45 -0.15 0.15 0.45 -0.45 -0.15 0.15 0.45 -0.45 -0.15 0.15 0.45];
-yi = [0.3 0.3 0.3 0.3 0 0 0 0 -0.3 -0.3 -0.3 -0.3] ;
+N = 20;
+xi = [-0.15 0.15 -0.75 -0.45 -0.15 0.15 0.45 0.75 -0.75 -0.45 -0.15 0.15 0.45 0.75 -0.75 -0.45 -0.15 0.15 0.45 0.75];
+yi = [0.6 0.6 0.3 0.3 0.3 0.3 0.3 0.3 0 0 0 0 0 0 -0.3 -0.3 -0.3 -0.3 -0.3 -0.3] ;
 ai = rand(1,N).*2*  pi - pi ;
  
 initial_conditions = [xi ; yi ; ai ] ;
@@ -59,12 +59,15 @@ si_to_uni_dyn = create_si_to_uni_dynamics();
 
 %% CREATE THE ROBOTS
 clear allRobots
-for i=1:N/2
-    allRobots{i} = Robot(i , initial_conditions(1,i) , initial_conditions(2,i) , initial_conditions(3,i) , SPEED, "small");
+for i=1:N
+    if (mod(i,2) == 0)
+        allRobots{i} = Robot(i , initial_conditions(1,i) , initial_conditions(2,i) , initial_conditions(3,i) , SPEED, "small");
+    else
+       allRobots{i} = Robot(i , initial_conditions(1,i) , initial_conditions(2,i) , initial_conditions(3,i) , SPEED, "big") ; 
+
+    end
 end
-for i=N/2:N
-    allRobots{i} = Robot(i , initial_conditions(1,i) , initial_conditions(2,i) , initial_conditions(3,i) , SPEED, "big");
-end
+
 
 %% DATA COLLECTION
 expectedDuration = 5000 ;
@@ -210,19 +213,37 @@ while target_energy>0 && total_time<900
         data_Y(iteration,:) = x(2,:);
         data_target(iteration,:) = [target_energy total_time] ;
 
+        %Computation of the Segregation Error
+        se = 0 ;
+        for i=1:N
+            for j=1:N
+                if (allRobots{i}.size_robot ~= allRobots{j}.size_robot)
+                    dist_i = norm([allRobots{i}.x ; allRobots{i}.y] - [x_target; y_target]) ;
+                    dist_j = norm([allRobots{j}.x ; allRobots{j}.y] - [x_target; y_target]) ;
+                    if (allRobots{i}.size_robot == "small" && dist_i > dist_j)
+                        se = se + 1 ;
+                    elseif (allRobots{j}.size_robot == "small" && dist_j > dist_i)
+                        se = se + 1;
+                    end
+                end
+            end
+        end
+
+        se = se / (N^2 / 2) ;
+
+
 
     % Send the previously set velocities to the agents.  This function must be called!
         r.step();   
     
     % Display
-        target_caption.String = sprintf('Energie de la cible %0.1f%%', round(10.*target_energy)/10);
+        target_caption.String = sprintf('Segregation Error %0.1f%', se);
         time_caption.String = sprintf('Temps écoulé : %d s', round(iteration*r.time_step));
-    
 end
 
 % Resultat
-    disp(['Temps total pour détruire la cible : ' num2str(round(iteration*r.time_step)) ' secondes'])
-
+    disp(['Temps total pour détruire la cible :  ' num2str(round(iteration*r.time_step)) ' secondes'])
+    
     
 % Données finales
     data_X = data_X(1:iteration,:);

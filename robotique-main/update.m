@@ -20,18 +20,29 @@ if (robot.cible_detected==1)
     v_random = randVel; 
             
     %Vecteur répulsif
-    if (robot.size_robots == small)
-        VIRTUAL_SIZE = 0.05
-    else
-        VIRTUAL_SIZE = 0.10
+
+
+   v_repuls = [0;0] ;
+   vvoisin = [0;0];
+    for i=1:INFO.nbVoisins
+        voisin = INFO.voisins{i};
+        distance = norm ([robot.x; robot.y] - [voisin.x;voisin.y]);
+        if (distance < robot.virtual_size)
+            vvoisin = [(vvoisin(1)- robot.x ) ; (vvoisin(2)- robot.y) ] ;
+            v_repuls(1) = v_repuls(1) - vvoisin(1) ;
+            v_repuls(2) = v_repuls(2) - vvoisin(2) ;
+
+        end
+
     end
 
-    if (INFO.nbVoisins > 0)
-    end
+
+
+
 
 
     %Combinaison des trois vecteurs
-    vi = v_axis + v_random;
+    vi = v_axis + 0.6 *  v_random + 0.6 * v_repuls ;
     
     %Déplacement
     robot.move(vi);

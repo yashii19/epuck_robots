@@ -76,6 +76,7 @@ classdef Robot < handle
         MAX_SPEED       % La vitesse de déplacement du robot. Vous ne pouvez pas modifier cette propriété.
         
         size_robot
+        virtual_size
     end
     
     
@@ -98,7 +99,11 @@ classdef Robot < handle
             robot.cible_x = NaN ;
             robot.cible_y = NaN ;
             robot.size_robot = size_robots;
-
+            if robot.size_robot == "small"
+                robot.virtual_size = 0.20 ;
+            else
+                robot.virtual_size = 0.60 ;
+            end
         end
         
         

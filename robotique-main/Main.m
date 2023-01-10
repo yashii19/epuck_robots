@@ -1,8 +1,6 @@
 
 %%  Ce code permet de parametrer et de lancer la simulation    %%
 %                                                               %
-%       ---------------  NE PAS MODIFIER ---------------        %
-%                                                               %
 %       Pour programmer les robots, utilisez Robot.m            %
 %                                                               %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,7 +17,9 @@ N = 20;
 xi = [-0.15 0.15 -0.75 -0.45 -0.15 0.15 0.45 0.75 -0.75 -0.45 -0.15 0.15 0.45 0.75 -0.75 -0.45 -0.15 0.15 0.45 0.75];
 yi = [0.6 0.6 0.3 0.3 0.3 0.3 0.3 0.3 0 0 0 0 0 0 -0.3 -0.3 -0.3 -0.3 -0.3 -0.3] ;
 ai = rand(1,N).*2*  pi - pi ;
- 
+
+
+
 initial_conditions = [xi ; yi ; ai ] ;
  
 r = Robotarium('NumberOfRobots', N, 'ShowFigure', true, 'InitialConditions', initial_conditions);
@@ -59,13 +59,23 @@ si_to_uni_dyn = create_si_to_uni_dynamics();
 
 %% CREATE THE ROBOTS
 clear allRobots
+small_count = 0 ;
+big_count = 0 ;
 for i=1:N
-    if (mod(i,2) == 0)
+    random = rand();
+    if ((random > 0.5 && small_count < N/2) || big_count >= N/2)
         allRobots{i} = Robot(i , initial_conditions(1,i) , initial_conditions(2,i) , initial_conditions(3,i) , SPEED, "small");
-    else
-       allRobots{i} = Robot(i , initial_conditions(1,i) , initial_conditions(2,i) , initial_conditions(3,i) , SPEED, "big") ; 
-
+        small_count = small_count + 1 ;
+    elseif (random < 0.5 && big_count < N/2 || small_count >= N/2)
+        allRobots{i} = Robot(i , initial_conditions(1,i) , initial_conditions(2,i) , initial_conditions(3,i) , SPEED, "big");
+        big_count = big_count + 1 ;
     end
+    %if (mod(i,2) == 0)
+    %    allRobots{i} = Robot(i , initial_conditions(1,i) , initial_conditions(2,i) , initial_conditions(3,i) , SPEED, "small");
+    %else
+    %   allRobots{i} = Robot(i , initial_conditions(1,i) , initial_conditions(2,i) , initial_conditions(3,i) , SPEED, "big") ; 
+
+    %end
 end
 
 
@@ -83,8 +93,10 @@ data_detect = nan(expectedDuration,N);
 
 %% START OF SIMULATION
 iteration = 0 ;
+se = 0 ;
+se_0 = 0;
 
-while target_energy>0 && total_time<900
+while total_time<900
     
    % Update iteration
         iteration = iteration + 1 ;
@@ -165,12 +177,7 @@ while target_energy>0 && total_time<900
         end
 
     
-    % Update target energy
-        for i=1:N
-            if (allRobots{i}.cible_attacked==1)
-                target_energy = max(target_energy - ATTACK_STRENGTH , 0 );
-            end
-        end
+
 
 
     %% Update robots speed and position  
@@ -197,24 +204,22 @@ while target_energy>0 && total_time<900
         r.set_velocities(1:N, dx);
         
     % Save data
-        tmpAtt = zeros(1,N);
+
         tmpDet = zeros(1,N);
         for i=1:N
-            if (allRobots{i}.cible_attacked==1)
-                tmpAtt(i) = 1 ;
-            end
+           
             if (allRobots{i}.cible_detected==1)
                 tmpDet(i) = 1 ;
             end 
         end
-        data_attack(iteration,:) = tmpAtt ;
+
         data_detect(iteration,:) = tmpDet ;
         data_X(iteration,:) = x(1,:);
         data_Y(iteration,:) = x(2,:);
         data_target(iteration,:) = [target_energy total_time] ;
 
         %Computation of the Segregation Error
-        se = 0 ;
+        
         for i=1:N
             for j=1:N
                 if (allRobots{i}.size_robot ~= allRobots{j}.size_robot)
@@ -232,18 +237,23 @@ while target_energy>0 && total_time<900
         se = se / (N^2 / 2) ;
 
 
-
+        % Resultat
+        if (se == 0 && se_0 == 0)
+            disp(['Temps total pour que Erreur de Segregation  :  ' num2str(round(iteration*r.time_step)) ' secondes']);
+            se_0 = 1 ;
+        end
     % Send the previously set velocities to the agents.  This function must be called!
         r.step();   
     
     % Display
-        target_caption.String = sprintf('Segregation Error %0.1f%', se);
+        target_caption.String = sprintf('Segregation Error %0.5f%', se);
         time_caption.String = sprintf('Temps écoulé : %d s', round(iteration*r.time_step));
+        
+
+
 end
 
-% Resultat
-    disp(['Temps total pour détruire la cible :  ' num2str(round(iteration*r.time_step)) ' secondes'])
-    
+ 
     
 % Données finales
     data_X = data_X(1:iteration,:);

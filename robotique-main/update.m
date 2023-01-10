@@ -1,6 +1,4 @@
-%% Voici un exemple de progamme pour la fonction *update* des robots.
-% Ici, le robot se déplace aléatoirement. Lorsqu'il découvre la cible il communique
-% l'information à tous ses voisins et va l'attaquer
+
 
 if (robot.cible_detected==1)
     % Si le robot connait l'emplacement de la cible, il la communique à
@@ -37,21 +35,15 @@ if (robot.cible_detected==1)
     end
 
 
-
-
-
-
     %Combinaison des trois vecteurs
-    vi = v_axis + 0.6 *  v_random + 0.6 * v_repuls ;
+    vi = v_axis + 0.6 *  v_random + 0.4 * v_repuls ;
     
     %Déplacement
     robot.move(vi);
 
 end
         
-        % Pour rappel : le robot attaque la cible automatiquement s'il
-        % connait son emplacement et se trouve à distance d'attaque. Vous
-        % n'avez pas à vous en soucier dans le code.
+     
 
    
 

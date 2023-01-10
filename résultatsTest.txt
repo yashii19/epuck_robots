@@ -1,0 +1,38 @@
+taille X3 (en secondes) moy = 16.1
+15
+10
+15
+23
+17
+11
+22
+15
+15
+18
+
+X5 moyenne = 15.1
+15
+16
+15
+10
+13
+21
+14
+20
+14
+13
+
+Distrib spatiale X3    moyenne :    small = 0.32   big = 0.77
+small = 0.31405    big = 0.73345
+small = 0.3119     big = 0.79049
+small = 0.31693    big = 0.72197
+small = 0.32001    big = 0.84816
+small = 0.31914    big = 0.74676
+
+
+Distrib spatiale X5   moyenne :    small = 0.32   big = 0.79
+small = 0.31976    big = 0.76451
+small = 0.31425    big = 0.87919
+small = 0.32944    big = 0.75654
+small = 0.31653    big = 0.84994
+small = 0.31029    big = 0.70477

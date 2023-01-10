@@ -51,7 +51,7 @@ classdef Robot < handle
             if robot.size_robot == "small"
                 robot.virtual_size = 0.20 ;
             else
-                robot.virtual_size = 0.40 ;
+                robot.virtual_size = 0.80 ;
             end
         end
         

@@ -9,7 +9,7 @@
 
 Dans le cadre de notre projet de robotique, nous avons pour objectif de lire et résumer un article scientifique et de réaliser un travail de ré-implémentation. Nous avons travaillé sur **la ségrégation de robots epucks en suivant l'effet *noix de Brésil*** basé sur l'article de Jianing Chen, Melvin Gauci, Michael J. Price et Roderich Groß [[1]](https://www.ifaamas.org/Proceedings/aamas2012/papers/4A_4.pdf)
 
-Le phénomène des noix du Brésil est un phénomène qui survient lorsque des noix sont mélangées avec des noix classiques plus petites et légères. On observe que **lorsque l’on secoue toutes les noix ensemble, les noix du Brésil remontent à la surface**, créant une ségrégation avec les noix classiques qui vont en dessous. Notre but est d'implémenter cet effet avec une **simulation de 20 robots e-pucks**, de tailles différentes pour représenter les différentes tailles de noix. 
+Le phénomène des noix du Brésil est un phénomène qui survient lorsque des noix sont mélangées avec des noix classiques plus petites et légères. On observe que **lorsque l’on secoue toutes les noix ensemble, les noix du Brésil remontent à la surface**, créant une ségrégation avec les noix classiques qui vont en dessous. Notre but est d'implémenter cet effet avec une **simulation de 20 robots e-pucks**, de tailles différentes pour représenter les différentes tailles de noix. [Voir le résumé de l'article](https://github.com/yashii19/epuck_robots/blob/main/resume_article.pdf)
 
 Les résultats ont été quantifiés à l’aide d’un indicateur nommé *erreur de ségrégation*, sur lequel nous avons basé nos observations, en reproduisant les tests donnés dans l'article.
 
